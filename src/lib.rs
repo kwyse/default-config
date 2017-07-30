@@ -1,6 +1,31 @@
 //! `default-config` allows you to specify defaults for a `struct` that is
 //! intended to be used as a configuration structure. The defaults you supply
 //! can be overriden by reading in from a YAML file.
+//!
+//! # Examples
+//!
+//! ```
+//! # #[macro_use] extern crate default_config;
+//! # #[macro_use] extern crate serde_derive;
+//! # extern crate serde;
+//! # extern crate serde_yaml;
+//! #
+//! # use std::io::Read;
+//! # use default_config::Config;
+//! #
+//! # fn main() {
+//! default_config!(MyConfig, MyConfigDefault, {
+//!     width: u32: 640,
+//!     height: u32: 480
+//! });
+//!
+//! let config = MyConfig::merge_with_file("config.yml");
+//!
+//! // Because the file does not exist in this example, the defaults are used
+//! assert_eq!(config.width, 640);
+//! assert_eq!(config.height, 480);
+//! # }
+//! ```
 #[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate serde_yaml;

@@ -17,12 +17,12 @@ Take a look at the tests for the different override combinations that are
 supported. The simplest usage would be:
 
 ```rust
-default_config!(Config, ConfigDefault, {
+default_config!(MyConfig, MyConfigDefault, {
     width: u32: 640,
     height: u32: 480
 });
 
-let config = Config::from_file("config.yml");
+let config = MyConfig::merge_with_file("config.yml");
 ```
 
 If `width` and `height` attributes exist inside the YAML file, the values from
