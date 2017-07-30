@@ -1,4 +1,4 @@
-//! `default-config` allows you to specify defaults for a `struct` that is
+//! `default_config` allows you to specify defaults for a `struct` that is
 //! intended to be used as a configuration structure. The defaults you supply
 //! can be overriden by reading in from a YAML file.
 //!
