@@ -1,3 +1,6 @@
+//! `default-config` allows you to specify defaults for a `struct` that is
+//! intended to be used as a configuration structure. The defaults you supply
+//! can be overriden by reading in from a YAML file.
 #[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate serde_yaml;
@@ -6,6 +9,11 @@ use std::io::Read;
 use std::fs::File;
 use std::path::Path;
 
+#[macro_export]
+/// Generates a struct with the same name as the first argument and with the
+/// field identifiers, types and defaults of the third argument. The struct
+/// will be exposed publicly, so the macro is intended to be used at the module
+/// level.
 macro_rules! default_config {
     ( 
         $name:ident, $default:ident, {
