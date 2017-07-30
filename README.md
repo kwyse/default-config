@@ -1,4 +1,4 @@
-# Default Config
+# Default Config
 
 [![Build Status](https://travis-ci.org/kwyse/default-config.svg?branch=master)](https://travis-ci.org/kwyse/default-config)
 
@@ -11,7 +11,7 @@ overriden by reading in from a YAML file.
 Add this crate to your `Cargo.toml` and ensure you add the `#[macro_use]`
 attribute when declaring this crate in `main.rs`/`lib.rs`.
 
-## Usage
+## Usage
 
 Take a look at the tests for the different override combinations that are
 supported. The simplest usage would be:
