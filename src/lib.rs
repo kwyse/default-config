@@ -58,7 +58,7 @@ fn impl_specified_defaults(ast: &syn::DeriveInput) -> quote::Tokens {
                     Some(attr) => {
                         if let syn::MetaItem::NameValue(_, ref lit) = attr.value {
                             if let syn::Lit::Str(ref value, _) = *lit {
-                                quote! { #ident: #value.parse().unwrap_or_default() }
+                                quote! { #ident: #value.parse().expect(&format!("Failed to parse {}", #value)) }
                             } else {
                                 panic!("#[derive(SpecifiedDefault)] only supports string literal attributes");
                             }

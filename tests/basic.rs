@@ -110,10 +110,14 @@ fn struct_defaults() {
     assert_eq!(result.bar, 451);
 }
 
-// #[test]
-// #[should_panic(expected = "")]
-// fn defaulting_a_non_struct() {
-//     #[derive(SpecifiedDefault)]
-//     enum Foo {
-//     }
-// }
+#[test]
+#[should_panic(expected = "Failed to parse")]
+fn fail_parsing() {
+    #[derive(SpecifiedDefault)]
+    struct Foo {
+        #[default = "42s"]
+        bar: u32,
+    }
+
+    Foo::default().bar;
+}
