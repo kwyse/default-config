@@ -1,3 +1,33 @@
+//! `specified_default_derive` enables you to choose the defaults implemented
+//! by the `Default` trait. After it is derived, the object will behave
+//! exactly as it would had the standard `Default` trait been derived. Nested
+//! objects must implement either `SpecifiedDefault` or `Default`.
+//!
+//! If you don't provide an override, the existing default value for that
+//! type will be used.
+//!
+//! # Examples
+//!
+//! ```
+//! # #[macro_use] extern crate specified_default_derive;
+//! #
+//! # fn main() {
+//! #[derive(SpecifiedDefault)]
+//! struct MyStruct {
+//!     #[default = "640"]
+//!     width: u32,
+//!     #[default = "480"]
+//!     height: u32,
+//!
+//!     scenes: u32,
+//! }
+//!
+//! let result = MyStruct::default();
+//! assert_eq!(result.width, 640);
+//! assert_eq!(result.height, 480);
+//! assert_eq!(result.scenes, 0);
+//! # }
+//! ```
 extern crate proc_macro;
 #[macro_use] extern crate quote;
 extern crate syn;
