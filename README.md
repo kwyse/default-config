@@ -1,6 +1,6 @@
 # Specified Default
 
-[![Build Status](https://travis-ci.org/kwyse/default-config.svg?branch=master)](https://travis-ci.org/kwyse/default-config)
+[![Build Status](https://travis-ci.org/kwyse/specified-default-derive.svg?branch=master)](https://travis-ci.org/kwyse/specified-default-derive)
 
 `specified_default_derive` enables you to choose the defaults implemented by the
 `Default` trait. After it is derived, the object will behave exactly as it would
