@@ -8,6 +8,8 @@
 //!
 //! # Examples
 //!
+//! ## Structs
+//!
 //! ```
 //! # #[macro_use] extern crate specified_default_derive;
 //! #
@@ -28,6 +30,25 @@
 //! assert_eq!(result.scenes, 0);
 //! # }
 //! ```
+//!
+//! ## Enums
+//!
+//! ```
+//! # #[macro_use] extern crate specified_default_derive;
+//! #
+//! # fn main() {
+//! #[derive(Debug, PartialEq, SpecifiedDefault)]
+//! enum MyEnum {
+//!     Foo,
+//!
+//!     #[default]
+//!     Bar,
+//! }
+//!
+//! assert_eq!(MyEnum::default(), MyEnum::Bar);
+//! # }
+//! ```
+//!
 extern crate proc_macro;
 #[macro_use] extern crate quote;
 extern crate syn;
@@ -46,42 +67,58 @@ pub fn specify_defaults(input: TokenStream) -> TokenStream {
 }
 
 fn impl_specified_defaults(ast: &syn::DeriveInput) -> quote::Tokens {
-    if let Body::Struct(VariantData::Struct(ref fields)) = ast.body {
-        const ATTRIBUTE_NAME: &'static str = "default";
+    const ATTRIBUTE_NAME: &'static str = "default";
 
-        let fields = fields.iter()
-            .map(|field| {
-                let ident = field.ident.as_ref();
-                let attrs = field.attrs.clone();
+    match ast.body {
+        Body::Struct(VariantData::Struct(ref fields)) => {
+            let fields = fields.iter()
+                .map(|field| {
+                    let ident = field.ident.as_ref();
+                    let attrs = field.attrs.clone();
 
-                match attrs.iter().find(|attr| attr.value.name() == ATTRIBUTE_NAME) {
-                    Some(attr) => {
-                        if let syn::MetaItem::NameValue(_, ref lit) = attr.value {
-                            if let syn::Lit::Str(ref value, _) = *lit {
-                                quote! { #ident: #value.parse().expect(&format!("Failed to parse {}", #value)) }
+                    match attrs.iter().find(|attr| attr.value.name() == ATTRIBUTE_NAME) {
+                        Some(attr) => {
+                            if let syn::MetaItem::NameValue(_, ref lit) = attr.value {
+                                if let syn::Lit::Str(ref value, _) = *lit {
+                                    quote! { #ident: #value.parse().expect(&format!("Failed to parse {}", #value)) }
+                                } else {
+                                    panic!("#[derive(SpecifiedDefault)] only supports string literal attributes");
+                                }
                             } else {
-                                panic!("#[derive(SpecifiedDefault)] only supports string literal attributes");
+                                panic!("#[derive(SpecifiedDefault)] only supports named value attributes");
                             }
-                        } else {
-                            panic!("#[derive(SpecifiedDefault)] only supports named value attributes");
-                        }
-                    },
-                    None => quote! { #ident: Default::default() }
-                }
-            })
-            .collect::<Vec<_>>();
+                        },
+                        None => quote! { #ident: Default::default() }
+                    }
+                })
+                .collect::<Vec<_>>();
 
-        let name = &ast.ident;
-        quote! {
-            impl Default for #name {
-                fn default() -> #name {
-                    #name {
-                        #(#fields),*
+            let name = &ast.ident;
+            quote! {
+                impl Default for #name {
+                    fn default() -> #name {
+                        #name {
+                            #(#fields),*
+                        }
                     }
                 }
             }
-        }
-    } else {
-        panic!("#[derive(SpecifiedDefault)] only supports structs");
+        },
+        Body::Enum(ref variants) => {
+            let default = variants.iter().find(|variant| {
+                variant.attrs.iter().find(|attr| attr.name() == ATTRIBUTE_NAME).is_some()
+            }).expect("#[derive(SpecifiedDefault) requires an enum variant is attributed with 'default']");
+
+            let name = &ast.ident;
+            let variant = &default.ident;
+            quote! {
+                impl Default for #name {
+                    fn default() -> #name {
+                        #name::#variant
+                    }
+                }
+            }
+        },
+        _ => panic!("#[derive(SpecifiedDefault)] does not support other struct variants")
     }
 }

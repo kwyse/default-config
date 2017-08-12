@@ -36,4 +36,16 @@ let result = MyStruct::default();
 assert_eq!(result.width, 640);
 assert_eq!(result.height, 480);
 assert_eq!(result.scenes, 0);
+
+// Or for enums...
+
+#[derive(Debug, PartialEq, SpecifiedDefault)]
+enum MyEnum {
+    Foo,
+
+    #[default]
+    Bar,
+}
+
+assert_eq!(MyEnum::default(), MyEnum::Bar);
 ```

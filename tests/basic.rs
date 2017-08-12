@@ -121,3 +121,19 @@ fn fail_parsing() {
 
     Foo::default().bar;
 }
+
+#[test]
+fn defaulted_enum() {
+    #[allow(dead_code)]
+    #[derive(Debug, PartialEq, SpecifiedDefault)]
+    enum Foo {
+        Bar,
+
+        #[default]
+        Baz,
+
+        Quux
+    }
+
+    assert_eq!(Foo::default(), Foo::Baz);
+}
